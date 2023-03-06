@@ -1,17 +1,30 @@
 import React, { useEffect, useState } from "react";
 import Product from "../../components/Products/Product";
+import { addToLS } from "../../utilities/Utilities";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+
   useEffect(() => {
     fetch("products.json")
       .then((res) => res.json())
       .then((data) => setProducts(data));
   }, []);
 
-  const handleAddCart = (product) => {
-    setCart([...cart, product]);
+  let addedProducts = [];
+  for (const id of cart) {
+    addedProducts.push(products.find((product) => product.id === id));
+  }
+
+  const price = addedProducts.reduce((pre, curr) => pre + curr.price, 0);
+  const shipping = addedProducts.reduce((pre, curr) => pre + curr.shipping, 0);
+  const tax = parseFloat((price * 0.1).toFixed(2));
+  const total = price + shipping + tax;
+  console.log(price);
+  const handleAddCart = (id) => {
+    setCart([...cart, id]);
+    addToLS(id);
   };
 
   return (
@@ -25,8 +38,14 @@ const Shop = () => {
           ></Product>
         ))}
       </div>
-      <div className="col-start-5 sticky top-4 h-screen text-center rounded-md pt-2 col-end-6 ml-4 bg-gray-100">
+      <div className="col-start-5 sticky top-4 h-screen pl-2  rounded-md pt-2 col-end-6 ml-4 bg-orange-200">
         <h1>Selected Item: {cart.length}</h1>
+        <p>Total Price: ${price}</p>
+        <p>Total Shipping Charge: ${shipping}</p>
+        <p>Tax: ${tax}</p>
+        <p>
+          <b>Grand Total: ${total}</b>
+        </p>
       </div>
     </div>
   );
