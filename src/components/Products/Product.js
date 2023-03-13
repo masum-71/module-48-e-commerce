@@ -14,7 +14,7 @@ const Product = ({ product, handleAddCart }) => {
         <p>Ratings: {ratings} star</p>
       </div>
       <button
-        onClick={() => handleAddCart(id)}
+        onClick={() => handleAddCart(product)}
         className="w-full rounded-lg bg-orange-400 hover:bg-orange-800 absolute bottom-0 left-0"
       >
         Add to cart

@@ -1,10 +1,5 @@
 const addToLS = (id) => {
-  let shoppingCart = {};
-  const productsFromLS = localStorage.getItem("shopping-cart");
-
-  if (productsFromLS) {
-    shoppingCart = JSON.parse(productsFromLS);
-  }
+  let shoppingCart = getStoredCart();
 
   const quantity = shoppingCart[id];
   if (quantity) {
@@ -16,4 +11,14 @@ const addToLS = (id) => {
   localStorage.setItem("shopping-cart", JSON.stringify(shoppingCart));
 };
 
-export { addToLS };
+const getStoredCart = () => {
+  let shoppingCart = {};
+  const productsFromLS = localStorage.getItem("shopping-cart");
+
+  if (productsFromLS) {
+    shoppingCart = JSON.parse(productsFromLS);
+  }
+  return shoppingCart;
+};
+
+export { addToLS, getStoredCart };

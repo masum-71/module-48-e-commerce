@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Product from "../../components/Products/Product";
-import { addToLS } from "../../utilities/Utilities";
+import { addToLS, getStoredCart } from "../../utilities/Utilities";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -12,21 +12,37 @@ const Shop = () => {
       .then((data) => setProducts(data));
   }, []);
 
-  let addedProducts = [];
-  for (const id of cart) {
-    addedProducts.push(products.find((product) => product.id === id));
-  }
+  useEffect(() => {
+    const storedCart = getStoredCart();
+    let savedCart = [];
+    for (let id in storedCart) {
+      const productsFromLS = products.find((product) => product.id === id);
+      if (productsFromLS) {
+        const quantity = storedCart[id];
+        productsFromLS.quantity = quantity;
+        savedCart.push(productsFromLS);
+      }
+    }
+    setCart(savedCart);
+  }, [products]);
 
-  const price = addedProducts.reduce((pre, curr) => pre + curr.price, 0);
-  const shipping = addedProducts.reduce((pre, curr) => pre + curr.shipping, 0);
+  // let addedProducts = [];
+  // for (const id of cart) {
+  //   addedProducts.push(products.find((product) => product.id === id));
+  // }
+
+  // Calculation
+  const price = cart.reduce((pre, curr) => pre + curr.price, 0);
+  const shipping = cart.reduce((pre, curr) => pre + curr.shipping, 0);
   const tax = parseFloat((price * 0.1).toFixed(2));
   const total = price + shipping + tax;
-  console.log(price);
-  const handleAddCart = (id) => {
-    setCart([...cart, id]);
-    addToLS(id);
+
+  const handleAddCart = (product) => {
+    setCart([...cart, product]);
+    addToLS(product.id);
   };
 
+  console.log(cart);
   return (
     <div className="grid grid-cols-5 m-10">
       <div className="col-start-1 col-end-5 grid grid-cols-3 gap-3">
